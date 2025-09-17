@@ -1,51 +1,6 @@
-name: YLGO Auto Deploy (Supabase + Vercel + Fly.io)
-
 on:
   push:
     branches: [main]
   workflow_dispatch:
-
-jobs:
-  ingest:
-    name: Excel → Supabase Sync
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.10"
-
-      - name: Install dependencies
-        run: pip install pandas openpyxl supabase
-
-      - name: Ingest Excel into Supabase
-        env:
-          SUPABASE_URL: ${{ secrets.DATABASE_URL }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE }}
-        run: python ingest_excel.py indentSupplyDtlExcel.xlsx
-
-  deploy:
-    name: Build & Deploy Frontend
-    runs-on: ubuntu-latest
-    needs: ingest
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: "18"
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build Next.js
-        run: npm run build
-
-      - name: Deploy to Vercel
-        run: npx vercel --prod --token=${{ secrets.VERCEL_TOKEN }}
-
-      - name: Deploy to Fly.io
-        run: flyctl deploy --remote-only --token=${{ secrets.FLY_API_TOKEN }}
+  schedule:
+    - cron: "0 */6 * * *"  # redeploy every 6 hours
