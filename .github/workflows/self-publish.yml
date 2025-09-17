@@ -25,13 +25,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: supabase/setup-cli@v1
+
+      - name: Create env file from GitHub secret
+        run: echo "${{ secrets.ENV_PRODUCTION }}" > .env.production
+
       - name: Load secrets
         run: |
-          echo "Loading secrets from .env.production..."
           while IFS='=' read -r key val; do
             [[ -z "$key" || "$key" =~ ^# ]] && continue
             echo "$key=$val" >> $GITHUB_ENV
           done < .env.production
+
       - name: Push schema
         run: |
           set -e
@@ -45,14 +49,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: Create env file from GitHub secret
+        run: echo "${{ secrets.ENV_PRODUCTION }}" > .env.production
+
       - name: Load secrets
         run: |
-          echo "Loading secrets from .env.production..."
           while IFS='=' read -r key val; do
             [[ -z "$key" || "$key" =~ ^# ]] && continue
             echo "$key=$val" >> $GITHUB_ENV
           done < .env.production
-      - name: Deploy API
+
+      - name: Deploy API (Fly.io)
         run: |
           set -e
           flyctl deploy --local-only --config apps/api/fly.toml || {
@@ -66,14 +74,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Create env file from GitHub secret
+        run: echo "${{ secrets.ENV_PRODUCTION }}" > .env.production
+
       - name: Load secrets
         run: |
-          echo "Loading secrets from .env.production..."
           while IFS='=' read -r key val; do
             [[ -z "$key" || "$key" =~ ^# ]] && continue
             echo "$key=$val" >> $GITHUB_ENV
           done < .env.production
-      - name: Deploy Web
+
+      - name: Deploy Web (Vercel)
         run: |
           set -e
           npx vercel --token=$VERCEL_TOKEN \
