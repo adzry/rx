@@ -2,12 +2,8 @@ name: Self Publish
 on:
   push:
 name: Self Publish
-
-on:
-  push:
     branches: [main]
   workflow_dispatch:   # <---- Tambah line ni    branches: [main]
-
 jobs:
   bootstrap:
     runs-on: ubuntu-latest
