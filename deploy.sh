@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 set -e
-
 echo "🚀 YLGO Local Deploy: Supabase + Vercel + Fly.io"
-
 # --- ENV VARIABLES ---
 export SUPABASE_URL="https://baugyhxqcfsfljxqxfup.supabase.co"
 export SUPABASE_SERVICE_ROLE="SUPABASE AI"
